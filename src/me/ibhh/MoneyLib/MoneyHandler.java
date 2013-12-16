@@ -27,7 +27,7 @@ public class MoneyHandler {
         plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
             @Override
             public void run() {
-        	plugin.getLogger().info("checking MoneyPlugin!");
+        	plugin.getLogger().fine("checking MoneyPlugin!");
                 iConomyversion();
             }
         });
@@ -75,8 +75,8 @@ public class MoneyHandler {
                     iConomyversion = 6;
                     plugin.getLogger().info("hooked into iConomy6");
                 } else {
-                    plugin.getLogger().info("cant hook into iConomy5, iConomy6, Vault or Register. Downloading Vault!");
-                    plugin.getLogger().info(" ************ Please download and configure Vault!!!!! **********");
+                    plugin.getLogger().severe("cant hook into iConomy5, iConomy6, Vault or Register. Downloading Vault!");
+                    plugin.getLogger().severe(" ************ Please download and configure Vault!!!!! **********");
                 }
             } catch (Exception E) {
                 E.printStackTrace();
@@ -98,7 +98,7 @@ public class MoneyHandler {
             try {
                 this.balance5 = getAccount5(name).getHoldings();
             } catch (Exception E) {
-        	plugin.getLogger().info("No Account! Please report it to an admin!");
+        	plugin.getLogger().severe("No Account! Please report it to an admin!");
                 E.printStackTrace();
                 this.balance5 = null;
                 return this.balance;
@@ -106,7 +106,7 @@ public class MoneyHandler {
             try {
                 this.balance = Double.valueOf(this.balance5.balance());
             } catch (Exception E) {
-        	plugin.getLogger().info("No Account! Please report it to an admin!");
+        	plugin.getLogger().severe("No Account! Please report it to an admin!");
                 E.printStackTrace();
                 this.balance5 = null;
                 return this.balance;
@@ -118,7 +118,7 @@ public class MoneyHandler {
             try {
                 this.balance = new Accounts().get(name).getHoldings().getBalance();
             } catch (Exception e) {
-        	plugin.getLogger().info("No Account! Please report it to an admin!");
+        	plugin.getLogger().severe("No Account! Please report it to an admin!");
                 e.printStackTrace();
                 balance = null;
                 return this.balance;
@@ -129,7 +129,7 @@ public class MoneyHandler {
                 this.balance =
                         Double.valueOf(Methods.getMethod().getAccount(name).balance());
             } catch (Exception e) {
-        	plugin.getLogger().info("No Account! Please report it to an admin!");
+        	plugin.getLogger().severe("No Account! Please report it to an admin!");
                 e.printStackTrace();
                 this.balance = null;
                 return this.balance;
@@ -152,7 +152,7 @@ public class MoneyHandler {
             try {
                 getAccount5(name).getHoldings().subtract(amountsubstract);
             } catch (Exception e) {
-        	plugin.getLogger().info("Cant substract money! Does account exist?");
+        	errorSubstract();
                 e.printStackTrace();
             }
         } else if (iConomyversion == 6) {
@@ -160,21 +160,21 @@ public class MoneyHandler {
                 com.iCo6.system.Account account = new Accounts().get(name);
                 account.getHoldings().subtract(amountsubstract);
             } catch (Exception e) {
-        	plugin.getLogger().info("Cant substract money! Does account exist?");
+        	errorSubstract();
                 e.printStackTrace();
             }
         } else if (iConomyversion == 1) {
             try {
                 Methods.getMethod().getAccount(name).subtract(amountsubstract);
             } catch (Exception e) {
-        	plugin.getLogger().info("Cant substract money! Does account exist?");
+        	errorSubstract();
                 e.printStackTrace();
             }
         } else if (iConomyversion == 2) {
             try {
                 economy.withdrawPlayer(name, amountsubstract);
             } catch (Exception e) {
-        	plugin.getLogger().info("Cant substract money! Does account exist?");
+        	errorSubstract();
                 e.printStackTrace();
             }
         }
@@ -190,7 +190,7 @@ public class MoneyHandler {
             try {
                 getAccount5(name).getHoldings().add(amountadd);
             } catch (Exception e) {
-        	plugin.getLogger().info("Cant substract money! Does account exist?");
+        	errorSubstract();
                 e.printStackTrace();
             }
         } else if (iConomyversion == 6) {
@@ -198,14 +198,14 @@ public class MoneyHandler {
                 com.iCo6.system.Account account = new Accounts().get(name);
                 account.getHoldings().add(amountadd);
             } catch (Exception e) {
-        	plugin.getLogger().info("Cant substract money! Does account exist?");
+        	errorSubstract();
                 e.printStackTrace();
             }
         } else if (iConomyversion == 1) {
             try {
                 Methods.getMethod().getAccount(name).add(amountadd);
             } catch (Exception e) {
-        	plugin.getLogger().info("Cant substract money! Does account exist?");
+        	errorSubstract();
         	
                 e.printStackTrace();
             }
@@ -213,10 +213,14 @@ public class MoneyHandler {
             try {
                 economy.depositPlayer(name, amountadd);
             } catch (Exception e) {
-        	plugin.getLogger().info("Cant substract money! Does account exist?");
+        	errorSubstract();
                 e.printStackTrace();
             }
         }
+    }
+    
+    private void errorSubstract() {
+	plugin.getLogger().severe("Cant substract money! Does account exist?");
     }
 
     public void addmoney(double amountadd, Player player) {
